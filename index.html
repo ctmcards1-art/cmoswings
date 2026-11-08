@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CMO Swings</title>
+<meta name="description" content="Private hitting lessons, online swing reviews and CMO Swings apparel.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:ital,wght@0,600;0,800;1,800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: single dark "night game" world — logo hero, then Shop and Book side by side in tabs, sticky cart drawer */
+:root{
+  --bg:#0c0d0f; --panel:#15171b; --line:#2a2d33; --chalk:#f2f1ec; --muted:#9a9ea6;
+  --accent:#8fb4d6; --accent-ink:#0c1520; --good:#7fc79a; --warn:#e0b45a;
+  --display:"Saira Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--chalk);font:16px/1.5 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.02em;text-wrap:balance;margin:0;line-height:1}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)))}
+nav .wrap{display:flex;align-items:center;gap:8px;padding:10px max(16px,env(safe-area-inset-left,0px))}
+.brand{font-family:var(--display);font-weight:800;font-style:italic;font-size:22px;letter-spacing:.04em;margin-right:auto}
+.tab{background:none;border:0;color:var(--muted);padding:8px 12px;font-family:var(--display);font-weight:600;font-size:17px;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid transparent}
+.tab[aria-selected="true"]{color:var(--chalk);border-color:var(--accent)}
+.cartbtn{background:var(--chalk);color:var(--bg);border:0;border-radius:999px;padding:8px 14px;font-weight:600;display:flex;gap:8px;align-items:center}
+.cartbtn .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;min-width:22px;padding:0 6px;font-size:13px;text-align:center}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center;padding-block:40px 32px}
+.hero img{width:100%;max-width:480px;justify-self:center}
+.hero h1{font-size:clamp(44px,7vw,84px);font-weight:800;font-style:italic}
+.hero p{color:var(--muted);max-width:44ch;font-size:18px;margin:16px 0 24px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.btn{border:1px solid var(--chalk);background:var(--chalk);color:var(--bg);padding:12px 20px;border-radius:4px;font-family:var(--display);font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em}
+.btn.ghost{background:transparent;color:var(--chalk)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.stats{display:flex;gap:28px;margin-top:28px;flex-wrap:wrap}
+.stats div{font-family:var(--display);font-size:28px;font-weight:800;line-height:1}
+.stats span{display:block;font-family:var(--body);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:500;margin-top:4px}
+
+section.view{padding-block:24px 64px}
+.sechead{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.sechead h2{font-size:40px;font-weight:800;font-style:italic}
+.sechead p{color:var(--muted);margin:0}
+
+/* shop */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:760px}
+.prod{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.swatch{aspect-ratio:1/1;max-width:100%;display:grid;place-items:center;position:relative}
+.swatch svg{width:78%;height:78%}
+.swatch.photo{aspect-ratio:auto;display:block;padding:0;background:none}
+.swatch img{width:100%;height:auto;display:block}
+.views{display:flex;gap:4px;padding:10px 14px 0}
+.vw{flex:1;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:3px;letter-spacing:.08em;text-transform:uppercase}
+.vw[aria-pressed="true"]{background:var(--chalk);color:var(--bg);border-color:var(--chalk)}
+.tag{position:absolute;top:10px;left:10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--bg);border:1px solid var(--line);padding:2px 8px;border-radius:2px}
+.pbody{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}
+.prow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.prow h3{font-size:22px;font-weight:600}
+.pdesc{color:var(--muted);font-size:14px;margin:0;flex:1}
+.sizes{display:flex;gap:6px;flex-wrap:wrap}
+.sz{background:transparent;border:1px solid var(--line);color:var(--chalk);border-radius:3px;min-width:38px;padding:5px 8px;font-size:13px}
+.sz[aria-pressed="true"]{background:var(--chalk);color:var(--bg);border-color:var(--chalk)}
+.add{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:9px;border-radius:4px;font-weight:600}
+.add:hover{background:var(--accent);color:var(--accent-ink)}
+
+/* booking */
+.book{display:grid;grid-template-columns:300px 1fr;gap:24px}
+.types{display:flex;flex-direction:column;gap:10px}
+.type{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;color:var(--chalk);display:grid;grid-template-columns:1fr auto;gap:2px 12px}
+.type[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.type b{font-family:var(--display);font-size:21px;text-transform:uppercase;letter-spacing:.03em}
+.type small{color:var(--muted);grid-column:1/-1;font-size:14px}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.day{flex:0 0 auto;width:64px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 0;color:var(--chalk);text-align:center}
+.day span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.day b{font-family:var(--display);font-size:26px;line-height:1.1}
+.day[aria-pressed="true"]{background:var(--chalk);color:var(--bg)}
+.day[aria-pressed="true"] span{color:var(--bg)}
+.day:disabled{opacity:.35;cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:16px}
+.slot{background:transparent;border:1px solid var(--line);color:var(--chalk);border-radius:4px;padding:10px 6px;font-family:var(--mono);font-size:14px}
+.slot:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.slot:disabled{text-decoration:line-through;color:var(--muted);opacity:.5;cursor:not-allowed}
+.slot.incart{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.online{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:grid;gap:12px;justify-items:start}
+.online h3{font-size:24px;font-weight:600}
+.online ol{margin:0;padding-left:20px;color:var(--muted);display:grid;gap:6px;max-width:60ch}
+.note{color:var(--muted);font-size:13px;margin-top:14px}
+.empty{color:var(--muted);padding:24px 0}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgb(0 0 0 / .6);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--panel);border-left:1px solid var(--line);z-index:41;display:flex;flex-direction:column;padding:calc(16px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) 20px}
+.dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.dhead h2{font-size:30px;font-weight:800;font-style:italic}
+.x{background:none;border:1px solid var(--line);color:var(--chalk);border-radius:4px;width:36px;height:36px;font-size:18px}
+.dbody{flex:1;overflow-y:auto;min-height:0}
+.line{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.line .meta{color:var(--muted);font-size:13px}
+.qty{display:flex;gap:6px;align-items:center;margin-top:6px}
+.qty button{background:none;border:1px solid var(--line);color:var(--chalk);width:28px;height:28px;border-radius:3px}
+.rm{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:13px;padding:0;justify-self:end}
+.totals{border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:grid;gap:4px}
+.totals div{display:flex;justify-content:space-between}
+.totals .grand{font-family:var(--display);font-size:24px;font-weight:800;margin-top:4px}
+form{display:grid;gap:12px}
+label{display:grid;gap:4px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+input,textarea{background:var(--bg);border:1px solid var(--line);color:var(--chalk);border-radius:4px;padding:10px;font:16px var(--body);width:100%}
+input:focus,textarea:focus{border-color:var(--accent);outline:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay{display:grid;gap:8px}
+.payopt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:4px;padding:10px;text-transform:none;letter-spacing:0;font-size:15px;color:var(--chalk)}
+.payopt input{width:auto;margin-top:4px}
+.payopt small{display:block;color:var(--muted);font-size:13px}
+.err{color:var(--warn);font-size:14px;min-height:1em;margin:0}
+.done{text-align:center;padding:32px 0}
+.done .big{font-family:var(--display);font-size:44px;font-weight:800;font-style:italic;line-height:1}
+.done .ord{font-family:var(--mono);color:var(--accent);margin:12px 0}
+
+/* admin */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500;text-transform:uppercase;font-size:12px;letter-spacing:.08em}
+.tablewrap{overflow-x:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line)}
+.pill.good{color:var(--good);border-color:var(--good)}
+
+footer{border-top:1px solid var(--line);padding-block:24px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--chalk);color:var(--bg);padding:10px 16px;border-radius:4px;font-weight:600;z-index:50}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;padding-block:24px}
+  .hero img{max-width:320px;order:-1}
+  .book{grid-template-columns:1fr}
+  .tab{padding:8px 6px;font-size:15px}
+  .brand{font-size:18px}
+}
+@media (max-width:420px){.brand{display:none}}
+@media (prefers-reduced-motion:no-preference){.prod,.slot,.type{transition:border-color .15s,background .15s}}
+</style>
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<nav><div class="wrap">
+  <div class="brand">CMO SWINGS</div>
+  <button class="tab" id="t-shop" aria-selected="true" data-view="shop">Shop</button>
+  <button class="tab" id="t-book" aria-selected="false" data-view="book">Book</button>
+  <button class="cartbtn" id="openCart">Cart <span class="n mono" id="cartN">0</span></button>
+</div></nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <h1>Hitting instruction &amp; apparel</h1>
+      <p>Private hitting lessons and online swing reviews from a Division I player, plus the CMO Swings apparel line. Book a session or shop the collection, and check out in one place.</p>
+      <div class="ctas">
+        <button class="btn" data-go="book">Book a lesson</button>
+        <button class="btn ghost" data-go="shop">Shop apparel</button>
+      </div>
+      <div class="stats">
+        <div>Division I<span>Playing experience</span></div>
+        <div>Video<span>Swing analysis included</span></div>
+        <div>1-on-1<span>And small-group lessons</span></div>
+      </div>
+    </div>
+    <img src="logo.png" alt="CMO Swings logo: a hitter finishing his swing">
+  </header>
+
+  <section class="view" id="v-shop">
+    <div class="sechead"><h2>Apparel</h2><p>Ships in 5–7 business days · free pickup at any lesson</p></div>
+    <div class="grid" id="products"></div>
+  </section>
+
+  <section class="view" id="v-book" hidden>
+    <div class="sechead"><h2>Book a lesson</h2><p>In person or online · times shown in Eastern</p></div>
+    <div class="book">
+      <div class="types" id="types"></div>
+      <div style="min-width:0">
+        <div class="days" id="days"></div>
+        <div class="slots" id="slots"></div>
+        <div class="online" id="online" hidden>
+          <h3>How the online review works</h3>
+          <ol>
+            <li>Check out and add a link to your swing video (or send it to @CmoSwings on Instagram).</li>
+            <li>Film 3–5 swings from the side and from behind, in game speed.</li>
+            <li>Get a recorded breakdown with voice-over, key adjustments and drills within 72 hours.</li>
+          </ol>
+          <button class="btn" id="addReview">Add swing review · $40</button>
+        </div>
+        <p class="note" id="bookNote">Choose a lesson type and date, then select a time to add it to your cart. We confirm your time by text after checkout.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer><span>© 2026 CMO Swings</span><span>Instagram @CmoSwings</span></footer>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Cart">
+  <div class="dhead"><h2 id="dTitle">Your cart</h2><button class="x" id="closeCart" aria-label="Close">✕</button></div>
+  <div class="dbody" id="dBody"></div>
+</aside>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// ===== SETTINGS =====
+// Paste your Formspree form ID (the code at the end of https://formspree.io/f/XXXXXXX) so every order is emailed to you.
+const FORMSPREE_ID="";
+// ====================
+const PRODUCTS=[
+  {id:"tee",name:"Logo Tee",price:40,imgs:["tee-front.jpg","tee-back.jpg"],desc:"4 oz tri-blend: 55% cotton, 34% polyester, 11% rayon. Small logo on the left chest, full logo on the back.",color:"#1b1d21",ink:"#f2f1ec",shape:"tee",sizes:["S","M","L","XL","XXL"]},
+  {id:"hat",name:"Rope Snapback",price:40,imgs:["hat.jpg"],desc:"A Branded Bills 5-panel rope snapback with perforated side panels and the embroidered CMO Swings logo.",color:"#15171b",ink:"#f2f1ec",shape:"hat",sizes:["One size"]},
+];
+const TYPES=[
+  {id:"1on1",name:"Private Lesson",min:60,price:60,desc:"Swing assessment, structured drill work and video review."},
+  {id:"half",name:"Express Lesson",min:30,price:35,desc:"Focused adjustment session ahead of a game or tryout."},
+  {id:"group",name:"Small Group (2–4)",min:60,price:35,unit:"per hitter",desc:"Instruction for two to four hitters. Priced per hitter.",group:true},
+  {id:"online",name:"Online Swing Review",price:40,online:true,desc:"Send your swing video and get a recorded breakdown with drills."}
+];
+// Weekly schedule (Eastern). Edit these to change availability.
+const HOURS={0:[10,11,12,13],1:[15,16,17,18,19],2:[15,16,17,18,19],3:[15,16,17,18,19],4:[15,16,17,18,19],5:[15,16,17],6:[9,10,11,12,13]};
+const SHIP=6, FREE_SHIP=75;
+
+const $=s=>document.querySelector(s);
+const money=n=>"$"+n.toFixed(2).replace(/\.00$/,"");
+let view={}, cart=[], selSize={}, selType="1on1", selDay=null, taken=new Set(), stage="cart";
+try{cart=JSON.parse(localStorage.getItem("cmo-cart")||"[]")}catch(e){}
+function save(){try{localStorage.setItem("cmo-cart",JSON.stringify(cart))}catch(e){}}
+
+function garment(p){
+  const logo=`<text x="100" y="${p.shape==="hat"?118:p.shape==="shorts"?150:100}" text-anchor="middle" font-family="Saira Condensed,Impact,sans-serif" font-weight="800" font-style="italic" font-size="${p.shape==="hat"?30:p.shape==="shorts"?18:34}" fill="${p.ink}">CMO</text>`;
+  const sw=`<path d="M70 ${p.shape==="hat"?92:76} Q100 ${p.shape==="hat"?78:60} 132 ${p.shape==="hat"?88:70}" stroke="${p.ink}" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>`;
+  const st=`fill="${p.color}" stroke="#3a3e46" stroke-width="2" stroke-linejoin="round"`;
+  const shapes={
+    tee:`<path ${st} d="M70 30 L40 40 L14 72 L38 90 L52 76 L52 175 L148 175 L148 76 L162 90 L186 72 L160 40 L130 30 Q100 52 70 30Z"/>`+sw+logo,
+    hood:`<path ${st} d="M72 34 L40 46 L16 120 L36 128 L52 86 L54 178 L146 178 L148 86 L164 128 L184 120 L160 46 L128 34 Q130 10 100 10 Q70 10 72 34Z"/><path d="M76 34 Q100 60 124 34" stroke="#3a3e46" stroke-width="2" fill="none"/><rect x="70" y="128" width="60" height="30" rx="4" fill="none" stroke="#3a3e46" stroke-width="2"/>`+sw+logo,
+    shorts:`<path ${st} d="M46 40 L154 40 L166 168 L110 168 L100 90 L90 168 L34 168Z"/><line x1="46" y1="54" x2="154" y2="54" stroke="#3a3e46" stroke-width="2"/>`+logo,
+    hat:`<path ${st} d="M36 130 Q36 52 100 52 Q164 52 164 130Z"/><path ${st} d="M30 130 L170 130 Q190 134 186 146 L60 146 Q30 146 30 130Z"/><circle cx="100" cy="52" r="5" fill="#3a3e46"/>`+sw+logo,
+    sleeve:`<path ${st} d="M78 16 L122 16 L116 184 L84 184Z"/><path d="M84 70 Q100 54 118 76" stroke="${p.ink}" stroke-width="3" fill="none" opacity=".8"/><text x="100" y="120" text-anchor="middle" font-family="Saira Condensed,Impact,sans-serif" font-weight="800" font-style="italic" font-size="18" fill="${p.ink}" transform="rotate(-90 100 120)">CMO</text>`
+  };
+  return `<svg viewBox="0 0 200 200" aria-hidden="true">${shapes[p.shape]}</svg>`;
+}
+
+function renderProducts(){
+  $("#products").innerHTML=PRODUCTS.map(p=>{
+    if(!selSize[p.id]) selSize[p.id]=p.sizes.length===1?p.sizes[0]:null;
+    return `<article class="prod">
+      <div class="swatch${p.imgs?" photo":""}">${p.tag?`<span class="tag">${p.tag}</span>`:""}${p.imgs?`<img src="${p.imgs[view[p.id]||0]}" alt="${p.name}${p.imgs.length>1?((view[p.id]||0)?", back view":", front view"):""}">`:garment(p)}</div>${p.imgs&&p.imgs.length>1?`<div class="views" role="group" aria-label="View">${["Front","Back"].map((l,i)=>`<button class="vw" data-v="${p.id}" data-i="${i}" aria-pressed="${(view[p.id]||0)===i}">${l}</button>`).join("")}</div>`:""}
+      <div class="pbody">
+        <div class="prow"><h3>${p.name}</h3><span class="mono">${money(p.price)}</span></div>
+        <p class="pdesc">${p.desc}</p>
+        <div class="sizes" role="group" aria-label="Size">${p.sizes.map(s=>`<button class="sz" data-p="${p.id}" data-s="${s}" aria-pressed="${selSize[p.id]===s}">${s}</button>`).join("")}</div>
+        <button class="add" data-add="${p.id}">${selSize[p.id]?"Add to cart":"Select a size"}</button>
+      </div></article>`}).join("");
+}
+$("#products").addEventListener("click",e=>{
+  const vw=e.target.closest(".vw"); if(vw){view[vw.dataset.v]=+vw.dataset.i;renderProducts();return}
+  const sz=e.target.closest(".sz"); if(sz){selSize[sz.dataset.p]=sz.dataset.s;renderProducts();return}
+  const a=e.target.closest("[data-add]"); if(!a)return;
+  const p=PRODUCTS.find(x=>x.id===a.dataset.add), s=selSize[p.id];
+  if(!s){toast("Please select a size");return}
+  const key=p.id+"|"+s, ex=cart.find(c=>c.key===key);
+  if(ex) ex.qty++; else cart.push({key,kind:"item",id:p.id,name:p.name,size:s,price:p.price,qty:1});
+  save();renderCartN();toast(`${p.name} (${s}) added`);
+});
+
+// --- booking
+const pad=n=>String(n).padStart(2,"0");
+const dkey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const hr=h=>`${h%12||12}:00 ${h<12?"AM":"PM"}`;
+function days(){const out=[],t=new Date();t.setHours(0,0,0,0);for(let i=0;i<14;i++){const d=new Date(t);d.setDate(t.getDate()+i);out.push(d)}return out}
+function openSlots(d){
+  const now=new Date(), hs=HOURS[d.getDay()]||[];
+  return hs.filter(h=>{const x=new Date(d);x.setHours(h);return x-now>3*3600e3});
+}
+function renderTypes(){
+  $("#types").innerHTML=TYPES.map(t=>`<button class="type" data-t="${t.id}" aria-pressed="${t.id===selType}"><b>${t.name}</b><span class="mono">${money(t.price)}</span><small>${t.online?"Online · 72-hour turnaround":t.min+" min"} · ${t.desc}</small></button>`).join("");
+}
+function renderDays(){
+  const ds=days(); if(!selDay){const f=ds.find(d=>openSlots(d).length);selDay=f?dkey(f):dkey(ds[0])}
+  $("#days").innerHTML=ds.map(d=>{const k=dkey(d),n=openSlots(d).filter(h=>!taken.has(k+"T"+h)).length;
+    return `<button class="day" data-d="${k}" aria-pressed="${k===selDay}" ${n?"":"disabled"} aria-label="${d.toDateString()}, ${n} open"><span>${d.toLocaleDateString("en-US",{weekday:"short"})}</span><b>${d.getDate()}</b><span>${d.toLocaleDateString("en-US",{month:"short"})}</span></button>`}).join("");
+}
+function renderSlots(){
+  const d=days().find(x=>dkey(x)===selDay); const hs=d?openSlots(d):[];
+  $("#slots").innerHTML=hs.length?hs.map(h=>{const id=selDay+"T"+h,inc=cart.some(c=>c.slot===id),tk=taken.has(id);
+    return `<button class="slot ${inc?"incart":""}" data-slot="${id}" data-h="${h}" ${tk?"disabled":""}>${hr(h)}${tk?"":inc?" ✓":""}</button>`}).join(""):`<p class="empty">No open times this day.</p>`;
+}
+function renderMode(){const on=TYPES.find(t=>t.id===selType).online;$("#days").hidden=on;$("#slots").hidden=on;$("#bookNote").hidden=on;$("#online").hidden=!on}
+function renderBook(){renderTypes();renderDays();renderSlots();renderMode()}
+$("#addReview").addEventListener("click",()=>{
+  const ex=cart.find(c=>c.kind==="review");
+  if(ex){ex.qty=Math.min(5,ex.qty+1)}else cart.push({key:"review",kind:"review",name:"Online Swing Review",price:40,qty:1,when:"Delivered within 72 hours of your video"});
+  save();renderCartN();toast("Swing review added");
+});
+$("#types").addEventListener("click",e=>{const b=e.target.closest(".type");if(b){selType=b.dataset.t;renderTypes();renderMode()}});
+$("#days").addEventListener("click",e=>{const b=e.target.closest(".day");if(b){selDay=b.dataset.d;renderDays();renderSlots()}});
+$("#slots").addEventListener("click",e=>{
+  const b=e.target.closest(".slot"); if(!b||b.disabled)return;
+  const id=b.dataset.slot, i=cart.findIndex(c=>c.slot===id);
+  if(i>=0){cart.splice(i,1);toast("Lesson removed")}
+  else{const t=TYPES.find(x=>x.id===selType),d=new Date(selDay+"T00:00");
+    cart.push({key:"s|"+id,kind:"session",slot:id,type:t.id,name:t.name,price:t.price,qty:1,group:!!t.group,
+      when:d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})+" · "+hr(+b.dataset.h)});
+    toast(`${t.name} added for ${hr(+b.dataset.h)}`)}
+  save();renderCartN();renderSlots();
+});
+
+// --- cart / checkout
+function totals(){
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0), hasItems=cart.some(c=>c.kind==="item"), hasReview=cart.some(c=>c.kind==="review");
+  const ship=hasItems&&sub<FREE_SHIP?SHIP:0; return {sub,ship,total:sub+ship,hasItems,hasReview};
+}
+function renderCartN(){$("#cartN").textContent=cart.reduce((s,c)=>s+c.qty,0)}
+function openCart(){stage="cart";$("#scrim").hidden=false;$("#drawer").hidden=false;renderDrawer()}
+function closeCart(){$("#scrim").hidden=true;$("#drawer").hidden=true;if(stage==="done"){stage="cart"}}
+$("#openCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#scrim").onclick=closeCart;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#drawer").hidden)closeCart()});
+
+function totalsHTML(){const t=totals();return `<div class="totals"><div><span>Subtotal</span><span class="mono">${money(t.sub)}</span></div>${t.hasItems?`<div><span>Shipping${t.ship?"":" (free over $75)"}</span><span class="mono">${t.ship?money(t.ship):"Free"}</span></div>`:""}<div class="grand"><span>Total</span><span class="mono">${money(t.total)}</span></div></div>`}
+
+function renderDrawer(){
+  const b=$("#dBody");
+  if(stage==="done") return;
+  if(stage==="cart"){
+    $("#dTitle").textContent="Your cart";
+    if(!cart.length){b.innerHTML=`<p class="empty">Your cart is empty. Add apparel or book a lesson to get started.</p>`;return}
+    b.innerHTML=cart.map((c,i)=>`<div class="line"><div><b>${c.name}</b><div class="meta">${c.kind==="item"?"Size "+c.size:c.when}</div>
+      ${c.kind==="item"||c.kind==="review"||c.group?`<div class="qty"><button data-q="${i}" data-d="-1" aria-label="Less">−</button><span class="mono">${c.qty}</span><button data-q="${i}" data-d="1" aria-label="More">+</button>${c.group?'<span class="meta">hitters</span>':""}</div>`:""}</div>
+      <div style="display:grid;gap:6px"><span class="mono">${money(c.price*c.qty)}</span><button class="rm" data-rm="${i}">Remove</button></div></div>`).join("")
+      +totalsHTML()+`<button class="btn" style="width:100%;margin-top:16px" id="toCheckout">Checkout</button>`;
+    return;
+  }
+  // checkout form
+  const t=totals();
+  $("#dTitle").textContent="Checkout";
+  b.innerHTML=`<form id="co" novalidate>
+    <label for="f-name">Full name<input id="f-name" autocomplete="name" required></label>
+    <div class="two"><label for="f-email">Email<input id="f-email" type="email" autocomplete="email" required></label>
+    <label for="f-phone">Phone<input id="f-phone" type="tel" autocomplete="tel" required></label></div>
+    ${t.hasItems?`<label for="f-addr">Shipping address<textarea id="f-addr" rows="2" autocomplete="street-address" placeholder="Leave blank to pick up at a session"></textarea></label>`:""}
+    ${cart.some(c=>c.kind==="review")?`<label for="f-video">Swing video link<input id="f-video" type="url" inputmode="url" placeholder="Google Drive, YouTube or Hudl link (optional)"></label>`:""}
+    ${cart.some(c=>c.kind!=="item")?`<label for="f-notes">Hitter info<textarea id="f-notes" rows="2" placeholder="Age, level, what you want to work on"></textarea></label>`:""}
+    <div class="pay" role="radiogroup" aria-label="Payment">
+      <label class="payopt"><input type="radio" name="pay" value="Venmo / Cash App" checked><span>Venmo or Cash App<small>You'll get a payment request at the phone number above.</small></span></label>
+      <label class="payopt"><input type="radio" name="pay" value="Pay in person"><span>Pay in person<small>Cash or card at your session or pickup.</small></span></label>
+    </div>
+    ${totalsHTML()}
+    <p class="err" id="err"></p>
+    <div class="two"><button type="button" class="btn ghost" id="back">Back</button><button class="btn" id="place">Place order</button></div>
+  </form>`;
+}
+$("#dBody").addEventListener("click",e=>{
+  const q=e.target.closest("[data-q]");if(q){const c=cart[+q.dataset.q];c.qty=Math.max(1,Math.min(c.group?4:20,c.qty+ +q.dataset.d));save();renderCartN();renderDrawer();return}
+  const r=e.target.closest("[data-rm]");if(r){cart.splice(+r.dataset.rm,1);save();renderCartN();renderDrawer();renderSlots();return}
+  if(e.target.id==="toCheckout"){stage="checkout";renderDrawer();$("#f-name").focus();return}
+  if(e.target.id==="back"){stage="cart";renderDrawer()}
+});
+$("#dBody").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const v=id=>($(id)?.value||"").trim(), err=$("#err");
+  const name=v("#f-name"),email=v("#f-email"),phone=v("#f-phone");
+  if(!name){err.textContent="Enter your name.";return}
+  if(!/^\S+@\S+\.\S+$/.test(email)){err.textContent="Enter a valid email so we can send your confirmation.";return}
+  if(phone.replace(/\D/g,"").length<10){err.textContent="Enter a 10-digit phone number.";return}
+  const pay=document.querySelector('input[name="pay"]:checked').value;
+  const btn=$("#place");btn.disabled=true;btn.textContent="Placing…";err.textContent="";
+  const order="CMO-"+Date.now().toString(36).toUpperCase().slice(-6);
+  const t=totals();
+  const rec={order,name,email,phone,address:v("#f-addr"),notes:v("#f-notes"),video:v("#f-video"),pay,items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price,size:c.size||null,slot:c.slot||null,when:c.when||null})),subtotal:t.sub,shipping:t.ship,total:t.total,status:"new",createdAt:new Date().toISOString()};
+  const slots=cart.filter(c=>c.slot).map(c=>c.slot);
+  if(!FORMSPREE_ID){ // this viewer can't save orders: hand them a ready-to-send order instead of a fake confirmation
+    const txt=`CMO Swings order ${order}\n${name} · ${email} · ${phone}\n`+rec.items.map(i=>`${i.qty}x ${i.name}${i.size?" ("+i.size+")":""}${i.when?" - "+i.when:""}`).join("\n")+`\nTotal ${money(t.total)} · ${pay}`+(rec.address?`\nShip to: ${rec.address}`:"")+(rec.notes?`\nNotes: ${rec.notes}`:"")+(rec.video?`\nVideo: ${rec.video}`:"");
+    stage="done";$("#dTitle").textContent="One more step";
+    $("#dBody").innerHTML=`<div class="done"><div class="big">Send to finish</div>
+      <p class="note">Your order isn't placed yet${slots.length?" and your lesson time isn't held":""}. Copy it below and send it to @CmoSwings on Instagram to confirm.</p>
+      <textarea id="manualOrder" rows="8" readonly style="margin:12px 0;font-family:var(--mono);font-size:13px"></textarea>
+      <div class="two"><button class="btn ghost" id="backCart">Back</button><button class="btn" id="copyOrder">Copy order</button></div></div>`;
+    $("#manualOrder").value=txt;
+    $("#backCart").onclick=()=>{stage="checkout";renderDrawer()};
+    $("#copyOrder").onclick=async()=>{try{await navigator.clipboard.writeText(txt);toast("Order copied")}catch(e){const m=$("#manualOrder");m.focus();m.select();toast("Press copy to copy the order")}};
+    return;
+  }
+  try{
+    const res=await fetch("https://formspree.io/f/"+FORMSPREE_ID,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({_subject:`New CMO Swings order ${order} - ${money(t.total)}`,_replyto:email,order,name,email,phone,
+        items:rec.items.map(i=>`${i.qty}x ${i.name}${i.size?" ("+i.size+")":""}${i.when?" - "+i.when:""} - ${money(i.price*i.qty)}`).join("\n"),
+        shipping_address:rec.address||"Pickup at lesson",hitter_notes:rec.notes,swing_video:rec.video,payment:pay,subtotal:money(t.sub),shipping:money(t.ship),total:money(t.total)})});
+    if(!res.ok) throw new Error("send");
+  }catch(x){
+    btn.disabled=false;btn.textContent="Place order";
+    err.textContent="We couldn't place the order. Check your connection and try again, or DM @CmoSwings on Instagram.";
+    return;
+  }
+  slots.forEach(s=>taken.add(s));
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  cart=[];save();renderCartN();renderBook();stage="done";
+  $("#dTitle").textContent="Confirmed";
+  $("#dBody").innerHTML=`<div class="done"><div class="big">Order confirmed</div><div class="ord">${order}</div>
+    <p>${count} item${count>1?"s":""} · ${money(t.total)} · ${pay}</p>
+    <p class="note">${slots.length?"We will text you to confirm your lesson time. ":""}${t.hasReview?(rec.video?"Your breakdown arrives within 72 hours. ":"Send your swing video to @CmoSwings on Instagram to start your review. "):""}Save your order number. We will reach out at ${email.replace(/</g,"")} or by text to confirm details.</p>
+    <button class="btn" id="keep">Continue shopping</button></div>`;
+  $("#keep").onclick=closeCart;
+});
+
+// --- views
+function show(view){
+  ["shop","book"].forEach(n=>{$("#v-"+n).hidden=n!==view;$("#t-"+n).setAttribute("aria-selected",n===view)});
+  if(view==="book")renderBook();
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>show(b.dataset.view));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{show(b.dataset.go);$("#v-"+b.dataset.go).scrollIntoView({behavior:"smooth"})});
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2000)}
+
+function renderOrders(list){
+  const rows=$("#orderRows");
+  if(!list.length){rows.innerHTML=`<tr><td colspan="5" class="empty">No orders yet. New checkouts show up here live.</td></tr>`;return}
+  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  rows.innerHTML=list.map(o=>`<tr><td class="mono">${esc(o.order)}<div class="note" style="margin:0">${esc(new Date(o.createdAt).toLocaleString())}</div></td>
+    <td>${esc(o.name)}<div class="note" style="margin:0">${esc(o.email)} · ${esc(o.phone)}${o.address?"<br>"+esc(o.address):""}${o.notes?"<br>"+esc(o.notes):""}${o.video?"<br>Video: "+esc(o.video):""}</div></td>
+    <td>${(o.items||[]).map(i=>`${esc(i.qty)}× ${esc(i.name)}${i.size?" ("+esc(i.size)+")":""}${i.when?" — "+esc(i.when):""}`).join("<br>")}</td>
+    <td class="mono">${money(+o.total||0)}</td><td><span class="pill good">${esc(o.pay)}</span></td></tr>`).join("");
+}
+
+renderProducts();renderCartN();renderBook();
+
+</script>
+
+</body>
+</html>
