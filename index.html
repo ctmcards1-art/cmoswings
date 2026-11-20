@@ -94,6 +94,8 @@ section.view{padding-block:24px 64px}
 .slot:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
 .slot:disabled{text-decoration:line-through;color:var(--muted);opacity:.5;cursor:not-allowed}
 .slot.incart{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.calbox{background:var(--panel);border:1px solid var(--line);border-radius:6px;min-height:520px;overflow:auto}
+.calbox>div{width:100%;min-height:520px}
 .online{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:grid;gap:12px;justify-items:start}
 .online h3{font-size:24px;font-weight:600}
 .online ol{margin:0;padding-left:20px;color:var(--muted);display:grid;gap:6px;max-width:60ch}
@@ -192,6 +194,7 @@ footer{border-top:1px solid var(--line);padding-block:24px;color:var(--muted);fo
       <div style="min-width:0">
         <div class="days" id="days"></div>
         <div class="slots" id="slots"></div>
+        <div class="calbox" id="calbox" hidden></div>
         <div class="online" id="online" hidden>
           <h3>How the online review works</h3>
           <ol>
@@ -220,15 +223,22 @@ footer{border-top:1px solid var(--line);padding-block:24px;color:var(--muted);fo
 // ===== SETTINGS =====
 // Paste your Formspree form ID (the code at the end of https://formspree.io/f/XXXXXXX) so every order is emailed to you.
 const FORMSPREE_ID="";
+// Or just your email: orders are sent there through FormSubmit (no account). The first order sends you an
+// "Activate" email from FormSubmit; click it once and every order after that lands in your inbox.
+const ORDER_EMAIL="ctmcards1@gmail.com";
+// Your Cal.com username (the part after cal.com/ in your booking link). When set, in-person lessons
+// book through your real Cal.com calendar instead of the built-in time picker.
+const CAL_USERNAME="colby-moholland-qwj0ex";
 // ====================
 const PRODUCTS=[
   {id:"tee",name:"Logo Tee",price:40,imgs:["tee-front.jpg","tee-back.jpg"],desc:"4 oz tri-blend: 55% cotton, 34% polyester, 11% rayon. Small logo on the left chest, full logo on the back.",color:"#1b1d21",ink:"#f2f1ec",shape:"tee",sizes:["S","M","L","XL","XXL"]},
   {id:"hat",name:"Rope Snapback",price:40,imgs:["hat.jpg"],desc:"A Branded Bills 5-panel rope snapback with perforated side panels and the embroidered CMO Swings logo.",color:"#15171b",ink:"#f2f1ec",shape:"hat",sizes:["One size"]},
 ];
 const TYPES=[
-  {id:"1on1",name:"Private Lesson",min:60,price:60,desc:"Swing assessment, structured drill work and video review."},
-  {id:"half",name:"Express Lesson",min:30,price:35,desc:"Focused adjustment session ahead of a game or tryout."},
-  {id:"group",name:"Small Group (2–4)",min:60,price:35,unit:"per hitter",desc:"Instruction for two to four hitters. Priced per hitter.",group:true},
+  // cal = the event type's link name in Cal.com (cal.com/USERNAME/private-lesson)
+  {id:"1on1",name:"Private Lesson",min:60,price:60,cal:"private-lesson",desc:"Swing assessment, structured drill work and video review."},
+  {id:"half",name:"Express Lesson",min:30,price:35,cal:"express-lesson",desc:"Focused adjustment session ahead of a game or tryout."},
+  {id:"group",name:"Small Group (2–4)",min:60,price:35,unit:"per hitter",cal:"small-group",desc:"Instruction for two to four hitters. Priced per hitter.",group:true},
   {id:"online",name:"Online Swing Review",price:40,online:true,desc:"Send your swing video and get a recorded breakdown with drills."}
 ];
 // Weekly schedule (Eastern). Edit these to change availability.
@@ -300,7 +310,26 @@ function renderSlots(){
   $("#slots").innerHTML=hs.length?hs.map(h=>{const id=selDay+"T"+h,inc=cart.some(c=>c.slot===id),tk=taken.has(id);
     return `<button class="slot ${inc?"incart":""}" data-slot="${id}" data-h="${h}" ${tk?"disabled":""}>${hr(h)}${tk?"":inc?" ✓":""}</button>`}).join(""):`<p class="empty">No open times this day.</p>`;
 }
-function renderMode(){const on=TYPES.find(t=>t.id===selType).online;$("#days").hidden=on;$("#slots").hidden=on;$("#bookNote").hidden=on;$("#online").hidden=!on}
+// Cal.com embed: real availability, confirmation emails and reminders come from Cal.com.
+function loadCal(){
+  if(window.Cal)return;
+  (function(C,A,L){let p=function(a,ar){a.q.push(ar)};let d=C.document;C.Cal=C.Cal||function(){let cal=C.Cal;let ar=arguments;if(!cal.loaded){cal.ns={};cal.q=cal.q||[];d.head.appendChild(d.createElement("script")).src=A;cal.loaded=true}if(ar[0]===L){const api=function(){p(api,arguments)};const namespace=ar[1];api.q=api.q||[];if(typeof namespace==="string"){cal.ns[namespace]=cal.ns[namespace]||api;p(cal.ns[namespace],ar);p(cal,["initNamespace",namespace])}else p(cal,ar);return}p(cal,ar)}})(window,"https://app.cal.com/embed/embed.js","init");
+}
+function renderCal(t){
+  const box=$("#calbox"); [...box.children].forEach(c=>c.hidden=c.dataset.t!==t.id);
+  if(box.querySelector(`[data-t="${t.id}"]`))return;
+  loadCal();
+  const el=document.createElement("div"); el.id="cal-"+t.id; el.dataset.t=t.id; box.appendChild(el);
+  const ns="cmo"+t.id;
+  Cal("init",ns,{origin:"https://app.cal.com"});
+  Cal.ns[ns]("inline",{elementOrSelector:"#cal-"+t.id,calLink:CAL_USERNAME+"/"+t.cal,config:{layout:"month_view",theme:"dark"}});
+  Cal.ns[ns]("ui",{theme:"dark",cssVarsPerTheme:{dark:{"cal-brand":"#8fb4d6"}},hideEventTypeDetails:false,layout:"month_view"});
+}
+function renderMode(){
+  const t=TYPES.find(x=>x.id===selType), on=!!t.online, cal=!on&&!!CAL_USERNAME&&!!t.cal;
+  $("#days").hidden=on||cal;$("#slots").hidden=on||cal;$("#bookNote").hidden=on||cal;$("#online").hidden=!on;$("#calbox").hidden=!cal;
+  if(cal)renderCal(t);
+}
 function renderBook(){renderTypes();renderDays();renderSlots();renderMode()}
 $("#addReview").addEventListener("click",()=>{
   const ex=cart.find(c=>c.kind==="review");
@@ -383,7 +412,7 @@ $("#dBody").addEventListener("submit",async e=>{
   const t=totals();
   const rec={order,name,email,phone,address:v("#f-addr"),notes:v("#f-notes"),video:v("#f-video"),pay,items:cart.map(c=>({name:c.name,qty:c.qty,price:c.price,size:c.size||null,slot:c.slot||null,when:c.when||null})),subtotal:t.sub,shipping:t.ship,total:t.total,status:"new",createdAt:new Date().toISOString()};
   const slots=cart.filter(c=>c.slot).map(c=>c.slot);
-  if(!FORMSPREE_ID){ // this viewer can't save orders: hand them a ready-to-send order instead of a fake confirmation
+  if(!FORMSPREE_ID&&!ORDER_EMAIL){ // this viewer can't save orders: hand them a ready-to-send order instead of a fake confirmation
     const txt=`CMO Swings order ${order}\n${name} · ${email} · ${phone}\n`+rec.items.map(i=>`${i.qty}x ${i.name}${i.size?" ("+i.size+")":""}${i.when?" - "+i.when:""}`).join("\n")+`\nTotal ${money(t.total)} · ${pay}`+(rec.address?`\nShip to: ${rec.address}`:"")+(rec.notes?`\nNotes: ${rec.notes}`:"")+(rec.video?`\nVideo: ${rec.video}`:"");
     stage="done";$("#dTitle").textContent="One more step";
     $("#dBody").innerHTML=`<div class="done"><div class="big">Send to finish</div>
@@ -396,11 +425,13 @@ $("#dBody").addEventListener("submit",async e=>{
     return;
   }
   try{
-    const res=await fetch("https://formspree.io/f/"+FORMSPREE_ID,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
-      body:JSON.stringify({_subject:`New CMO Swings order ${order} - ${money(t.total)}`,_replyto:email,order,name,email,phone,
+    const url=FORMSPREE_ID?"https://formspree.io/f/"+FORMSPREE_ID:"https://formsubmit.co/ajax/"+ORDER_EMAIL;
+    const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({_template:"table",_captcha:"false",_subject:`New CMO Swings order ${order} - ${money(t.total)}`,_replyto:email,order,name,email,phone,
         items:rec.items.map(i=>`${i.qty}x ${i.name}${i.size?" ("+i.size+")":""}${i.when?" - "+i.when:""} - ${money(i.price*i.qty)}`).join("\n"),
         shipping_address:rec.address||"Pickup at lesson",hitter_notes:rec.notes,swing_video:rec.video,payment:pay,subtotal:money(t.sub),shipping:money(t.ship),total:money(t.total)})});
     if(!res.ok) throw new Error("send");
+    const j=await res.json().catch(()=>({})); if(j.success===false||j.success==="false") throw new Error("send");
   }catch(x){
     btn.disabled=false;btn.textContent="Place order";
     err.textContent="We couldn't place the order. Check your connection and try again, or DM @CmoSwings on Instagram.";
