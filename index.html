@@ -121,14 +121,35 @@ section{padding-block:88px}
 .note{color:var(--muted);font-size:15px;margin:14px 0 0}
 .empty{color:var(--muted);padding:24px 0;margin:0}
 
-/* coach */
+/* coach: his baseball card, front and back */
 .coach{background:var(--paper);border-block:1px solid var(--rule)}
-.coach .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:40px;align-items:center}
-.coach h2{font-size:clamp(44px,6vw,76px)}
-.coach p{margin:0 0 14px;max-width:36em}
-.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:26px;padding-top:22px;border-top:1px solid var(--rule)}
-.facts b{display:block;font-family:var(--display);font-size:36px;line-height:1}
-.facts span{color:var(--muted);font-size:15px}
+.cardset{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:56px;align-items:start}
+.front{position:sticky;top:96px;margin:0;aspect-ratio:5/7;background:var(--chalk);border-radius:12px;padding:12px;transform:rotate(-2.5deg);box-shadow:0 1px 0 var(--rule),0 18px 36px -18px rgb(18 48 36 / .45)}
+.front .pic{position:relative;height:100%;border-radius:4px;overflow:hidden;background:var(--turf);border:3px solid var(--turf-deep)}
+.front .pic svg{position:absolute;inset:0;width:100%;height:100%}
+.front .pic img{position:absolute;left:50%;top:40%;width:78%;transform:translate(-50%,-50%)}
+.front .pic img.photo-in{left:0;top:0;width:100%;height:100%;transform:none;object-fit:cover}
+.plate{position:absolute;left:-8px;right:28px;bottom:26px;background:var(--clay);color:var(--ink);padding:10px 16px 9px;border-radius:2px;box-shadow:0 2px 0 rgb(0 0 0 / .18)}
+.plate b{display:block;font-family:var(--display);font-weight:900;font-size:34px;line-height:.95}
+.plate span{font-weight:600;font-size:14px}
+.pos{position:absolute;right:16px;bottom:16px;width:58px;height:58px;border-radius:50%;background:var(--chalk);color:var(--turf-deep);border:3px solid var(--turf-deep);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:26px}
+.back{border:2px solid var(--ink);border-radius:10px;background:var(--chalk);overflow:hidden}
+.back .bar{background:var(--turf-deep);color:var(--chalk);padding:16px 22px;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.back .bar h3{font-size:40px}
+.back .bar span{color:#cfdcd3;font-size:15px}
+.vitals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:2px solid var(--ink)}
+.vitals div{padding:12px 16px;border-right:1px solid var(--rule)}
+.vitals div:last-child{border-right:0}
+.vitals dt{font-size:13px;color:var(--muted)}
+.vitals dd{margin:2px 0 0;font-family:var(--display);font-weight:700;font-size:24px;line-height:1.05}
+.career{width:100%;border-collapse:collapse;font-size:16px}
+.career caption{text-align:left;padding:14px 22px 6px;font-family:var(--display);font-weight:700;font-size:22px}
+.career th,.career td{text-align:left;vertical-align:baseline;padding:11px 22px;border-top:1px solid var(--rule)}
+.career th{font-family:var(--display);font-weight:900;font-size:22px;width:5.5em;white-space:nowrap;color:var(--turf)}
+.career tr.now th,.career tr.now td{background:var(--paper)}
+.quote{margin:0;padding:18px 22px 20px 19px;border-top:2px solid var(--ink);border-left:5px solid var(--stitch)}
+.quote p{margin:0;font-family:var(--display);font-weight:700;font-size:26px;line-height:1.1;max-width:24em}
+.quote cite{display:block;font-style:normal;color:var(--muted);font-size:14px;margin-top:6px}
 
 /* apparel */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;max-width:920px}
@@ -201,14 +222,20 @@ input:focus,textarea:focus{border-color:var(--turf);outline:2px solid var(--turf
   .field{max-width:560px;margin-inline:auto}
   .head{grid-template-columns:1fr}
   .book{grid-template-columns:1fr;gap:24px}
-  .coach .wrap{grid-template-columns:1fr;gap:16px}
+  .cardset{grid-template-columns:1fr;gap:40px}
+  .front{position:relative;top:0;width:min(320px,82%);margin-inline:auto}
   section{padding-block:64px}
 }
 @media (max-width:520px){
   .navlink{display:none}
   .mark span{font-size:22px}
-  .facts{grid-template-columns:1fr;gap:12px}
-  .facts b{font-size:30px}
+  .vitals{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .vitals div:nth-child(2){border-right:0}
+  .vitals div:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+  .career th,.career td{padding:10px 16px}
+  .career th{width:4.6em;font-size:20px}
+  .back .bar,.quote{padding-inline:16px}
+  .career caption{padding-inline:16px}
   .online,.picker{padding:22px}
   .two{grid-template-columns:1fr}
 }
@@ -278,17 +305,45 @@ input:focus,textarea:focus{border-color:var(--turf);outline:2px solid var(--turf
   </div>
 </section>
 
-<div class="coach">
+<div class="coach" id="coach">
   <section class="wrap">
-    <h2>Who you'll work with</h2>
-    <div>
-      <p>Colby Moholland is a Division I utility player. Every lesson starts with your swing as it is today: an assessment, drill work that targets what needs fixing, and video so you can see the change for yourself.</p>
-      <p>Can't make it in person? Send a video for an online swing review instead.</p>
-      <div class="facts">
-        <div><b>Division I</b><span>Playing experience</span></div>
-        <div><b>1-on-1</b><span>Or small groups of 2 to 4</span></div>
-        <div><b>Video</b><span>Swing analysis included</span></div>
-      </div>
+    <div class="head">
+      <h2>Your coach</h2>
+      <p>Every lesson starts with your swing as it is today: an assessment, drill work that targets what needs fixing, and video so you can see the change. Can't make it in person? Send a video for an online swing review.</p>
+    </div>
+    <div class="cardset">
+      <figure class="front" aria-label="Colby Moholland's player card">
+        <div class="pic">
+          <!-- To use a photo, replace the svg and logo below with: <img class="photo-in" src="coach.jpg" alt="Colby Moholland at the plate"> -->
+          <svg viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true"><g fill="var(--mow)">
+            <rect x="-20" y="-10" width="9" height="170" transform="rotate(-30 50 70)"/><rect x="0" y="-10" width="9" height="170" transform="rotate(-30 50 70)"/><rect x="20" y="-10" width="9" height="170" transform="rotate(-30 50 70)"/><rect x="40" y="-10" width="9" height="170" transform="rotate(-30 50 70)"/><rect x="60" y="-10" width="9" height="170" transform="rotate(-30 50 70)"/><rect x="80" y="-10" width="9" height="170" transform="rotate(-30 50 70)"/><rect x="100" y="-10" width="9" height="170" transform="rotate(-30 50 70)"/></g></svg>
+          <img src="logo.png" alt="">
+        </div>
+        <figcaption class="plate"><b>Colby Moholland</b><span>Utility, bats left</span></figcaption>
+        <div class="pos" aria-hidden="true">UT</div>
+      </figure>
+
+      <article class="back" aria-labelledby="backName">
+        <div class="bar"><h3 id="backName">Colby Moholland</h3><span>Robbinston, Maine</span></div>
+        <dl class="vitals">
+          <div><dt>Level</dt><dd>Division I</dd></div>
+          <div><dt>Team</dt><dd>U. of Maine</dd></div>
+          <div><dt>Position</dt><dd>Utility</dd></div>
+          <div><dt>Bats</dt><dd>Left</dd></div>
+        </dl>
+        <table class="career">
+          <caption>Career</caption>
+          <tbody>
+            <tr><th scope="row">Age 8</th><td>Went to his first University of Maine baseball camp</td></tr>
+            <tr><th scope="row">2024</th><td>Played in the Prep Baseball Future Games, a national showcase</td></tr>
+            <tr><th scope="row">2024</th><td>Ranked the No. 3 junior in Maine by Prep Baseball</td></tr>
+            <tr><th scope="row">2024</th><td>Committed to the University of Maine out of Washington Academy</td></tr>
+            <tr><th scope="row">2025</th><td>Signed with Maine</td></tr>
+            <tr class="now"><th scope="row">2026</th><td><b>Utility player for the Maine Black Bears, Division I</b></td></tr>
+          </tbody>
+        </table>
+        <blockquote class="quote"><p>My dad and I have hit the baseball since I can remember.</p><cite>Colby, on where his swing came from</cite></blockquote>
+      </article>
     </div>
   </section>
 </div>
